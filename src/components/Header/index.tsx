@@ -1,13 +1,19 @@
-import Image from 'next/image';
+import { useSession } from 'next-auth/client';
 import { SignInButton } from '../SignInButton';
 import { useRouter } from 'next/router';
+import { FiPlusSquare } from 'react-icons/fi';
 
-import logoImg from '../../../public/images/logo.svg';
+
 
 import styles from './styles.module.scss';
 
-export function Header() {
+interface HeaderProps {
+  openModal: () => void;
+}
+
+export function Header({ openModal }: HeaderProps) {
   const router = useRouter();
+  const [session] = useSession();
 
   console.log(router.pathname)
   return (
@@ -15,9 +21,19 @@ export function Header() {
       <div className={styles.headerContent}>
         CodeTracker
         <nav>
-          <a className={router.pathname==='/' ? styles.active : ''} >Home</a>
-          <a className={router.pathname==='/tasks' ? styles.active : ''}>Atividades</a>
+          <a className={router.pathname==='/' ? styles.active : ''} onClick={() => {router.push('/')}}>Home</a>
+          {session && <a className={router.pathname==='/tasks' ? styles.active : ''} onClick={() => {router.push('/tasks')} }>Atividades</a>}
         </nav>
+        { router.pathname === '/tasks' && 
+        <button className={styles.addTaskButton}
+        type="button"
+        onClick={openModal}
+      >
+        <div className={styles.text}>Nova Atividade</div>
+        <div className={styles.icon}>
+          <FiPlusSquare size={24} />
+        </div>
+      </button> }
         <SignInButton />
       </div>
     </header>
