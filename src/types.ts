@@ -3,4 +3,5 @@ export interface TTask {
   title: string;
   description: string;
   status: string;
+  available: boolean;
 }
