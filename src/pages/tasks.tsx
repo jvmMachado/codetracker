@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
+import { uuid } from 'uuidv4';
 
 import styles from './tasks.module.scss';
-import { TasksTable } from '../components/TasksTable';
 import ModalAddTask from '../components/ModalAddTask';
 import ModalEditTask from '../components/ModalEditTask';
 import { TTask } from '../types';
@@ -18,13 +18,31 @@ interface HomeProps {
 
 export default function Tasks({ modalOpen, toggleModal, editModalOpen, toggleEditModal }: HomeProps) {
   const [tasks, setTasks] = useState(initialTasks);
+  const [editingTask, setEditingTask] = useState<TTask>({} as TTask);
 
   const handleAddTask = async (task: TTask) => {
-    console.log('adding task')
+    const newTask = {...task, id: uuid()};
+
+    setTasks([...tasks, newTask]);
   }
 
   const handleUpdateTask = async (task: TTask) => {
-    console.log('updating task')
+    const newTasks = tasks.map(oldTask => 
+      oldTask.id !== task.id ? oldTask : task
+      )
+      console.log(newTasks);
+    setTasks(newTasks);
+  }
+
+  const handleDeleteTask = async (id: string) => {
+    const TasksFiltered = tasks.filter(task => task.id !== id);
+
+    setTasks(TasksFiltered);
+  }
+
+  const handleEditTask = (task: TTask) => {
+    setEditingTask(task);
+    toggleEditModal();
   }
 
   return (
@@ -41,15 +59,14 @@ export default function Tasks({ modalOpen, toggleModal, editModalOpen, toggleEdi
       <ModalEditTask
         isOpen={editModalOpen}
         setIsOpen={toggleEditModal}
-        // editingTask={editingTask}
+        editingTask={editingTask}
         handleUpdateTask={handleUpdateTask}
       />
       <div  className={styles.TasksContainer}>
         {tasks.map(task => (
-          <Task key={task.id} task={task} handleEditTask={ () => {}} handleDelete={() => {}} />
+          <Task key={task.id} task={task} handleEditTask={ () => {handleEditTask(task)}} handleDelete={() => {handleDeleteTask(task.id)}} />
         ))}
       </div>
-      {/* <TasksTable /> */}
     </>
   )
 }

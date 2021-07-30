@@ -8,23 +8,11 @@ import { TTask } from '../../types';
 interface TaskProps {
   task: TTask;
   handleEditTask: (data: TTask) => void;
-  handleDelete: (taskId: number) => void;
+  handleDelete: (taskId: string) => void;
 }
 
 const Task = (props: TaskProps) => {
-  const { available } = props.task;
-  const [isAvailable, setIsAvailable] = useState(available);
 
-  const toggleAvailable = async () => {
-    // const { task } = props;
-
-    // // await api.put(`/tasks/${task.id}`, {
-    // //   ...task,
-    // //   available: !isAvailable,
-    // // });
-
-    setIsAvailable(!isAvailable);
-  }
 
   const setEditingTask = () => {
     const { task, handleEditTask } = props;
@@ -35,15 +23,12 @@ const Task = (props: TaskProps) => {
   const { task, handleDelete } = props;
 
   return (
-    <Container available={isAvailable}>
+    <Container >
       <header>
       </header>
       <section className="body">
         <h2>{task.title}</h2>
         <p>{task.description}</p>
-        {/* <p className="price">
-          R$ <b>{task.price}</b>
-        </p> */}
       </section>
       <section className="footer">
         <div className="icon-container">
@@ -66,19 +51,8 @@ const Task = (props: TaskProps) => {
           </button>
         </div>
 
-        <div className="availability-container">
-          <p>{isAvailable ? 'Disponível' : 'Indisponível'}</p>
-
-          <label htmlFor={`available-switch-${task.id}`} className="switch">
-            <input
-              id={`available-switch-${task.id}`}
-              type="checkbox"
-              checked={isAvailable}
-              onChange={toggleAvailable}
-              data-testid={`change-status-task-${task.id}`}
-            />
-            <span className="slider" />
-          </label>
+        <div className="status-container">
+          <p>{task.status}</p>
         </div>
       </section>
     </Container>

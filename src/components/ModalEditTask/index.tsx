@@ -17,6 +17,7 @@ const ModalEditTask = (props: ModalEditTaskProps) => {
   async function handleSubmit(data: TTask) {
     const { setIsOpen, handleUpdateTask } = props;
 
+    console.log(data);
     handleUpdateTask(data);
     setIsOpen();
   };
@@ -28,12 +29,17 @@ const ModalEditTask = (props: ModalEditTaskProps) => {
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
       <Form onSubmit={handleSubmit} initialData={editingTask}>
         <h1>Editar Prato</h1>
-        <Input name="image" placeholder="Cole o link aqui"  />
+        <Input type="hidden" name="id" defaultValue={editingTask?.id} />
+        <Input name="title" placeholder="Tarefa" />
+          <Input name="description" placeholder="Descrição" />
+          <label htmlFor="pendente"> Pendente </ label>
+          <Input type="radio" name="status" id="pendente" value="PENDENTE" defaultChecked/>
 
-        <Input name="name" placeholder="Ex: Moda Italiana" />
-        <Input name="price" placeholder="Ex: 19.90" />
+          <label htmlFor="concluida"> Concluída </ label>
+          <Input type="radio" name="status" id="concluida" value="CONCLUIDA" />
 
-        <Input name="description" placeholder="Descrição" />
+          <label htmlFor="cancelada"> Cancelada </ label>
+          <Input type="radio" name="status" id="cancelada" value="CANCELADA" />
 
         <button type="submit" data-testid="edit-food-button">
           <div className="text">Editar Prato</div>

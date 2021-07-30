@@ -16,6 +16,7 @@ const ModalAddTask = (props: ModalAddTaskProps) => {
   async function handleSubmit(data: TTask) {
     const { setIsOpen, handleAddTask } = props;
 
+    console.log(data);
     handleAddTask(data);
     setIsOpen();
   };
@@ -26,9 +27,17 @@ const ModalAddTask = (props: ModalAddTaskProps) => {
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
         <Form onSubmit={handleSubmit}>
           <h1>Nova Atividade</h1>
-          <Input name="name" placeholder="Tarefa" />
+          <Input name="title" placeholder="Tarefa" />
           <Input name="description" placeholder="Descrição" />
-          <Input name="status" placeholder="Status" />
+          <label htmlFor="pendente"> Pendente </ label>
+          <Input type="radio" name="status" id="pendente" value="PENDENTE" defaultChecked/>
+
+          <label htmlFor="concluida"> Concluída </ label>
+          <Input type="radio" name="status" id="concluida" value="CONCLUIDA" />
+
+          <label htmlFor="cancelada"> Cancelada </ label>
+          <Input type="radio" name="status" id="cancelada" value="CANCELADA" />
+
           <button type="submit" data-testid="add-food-button">
             <p className="text">Adicionar Atividade</p>
             <div className="icon">

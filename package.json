@@ -22,7 +22,8 @@
     "react-modal": "^3.14.3",
     "sass": "^1.36.0",
     "stripe": "^8.165.0",
-    "styled-components": "^5.3.0"
+    "styled-components": "^5.3.0",
+    "uuidv4": "^6.2.11"
   },
   "devDependencies": {
     "@types/next-auth": "^3.15.0",
