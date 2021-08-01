@@ -3,39 +3,55 @@ import { SignInButton } from '../SignInButton';
 import { useRouter } from 'next/router';
 import { FiPlusSquare } from 'react-icons/fi';
 
-
-
 import styles from './styles.module.scss';
+import useAuth from '../../hooks/useAuth';
 
-interface HeaderProps {
-  openModal: () => void;
-}
+interface HeaderProps {}
 
-export function Header({ openModal }: HeaderProps) {
+export function Header({}: HeaderProps) {
   const router = useRouter();
   const [session] = useSession();
+  const { toggleModal } = useAuth();
 
-  console.log(router.pathname)
+  //console.log(router.pathname)
   return (
     <header className={styles.headerContainer}>
       <div className={styles.headerContent}>
         CodeTracker
         <nav>
-          <a className={router.pathname==='/' ? styles.active : ''} onClick={() => {router.push('/')}}>Home</a>
-          {session && <a className={router.pathname==='/tasks' ? styles.active : ''} onClick={() => {router.push('/tasks')} }>Atividades</a>}
+          <a
+            className={router.pathname === '/' ? styles.active : ''}
+            onClick={() => {
+              router.push('/');
+            }}
+          >
+            Home
+          </a>
+          {session && (
+            <a
+              className={router.pathname === '/tasks' ? styles.active : ''}
+              onClick={() => {
+                router.push('/tasks');
+              }}
+            >
+              Atividades
+            </a>
+          )}
         </nav>
-        { router.pathname === '/tasks' && 
-        <button className={styles.addTaskButton}
-        type="button"
-        onClick={openModal}
-      >
-        <div className={styles.text}>Nova Atividade</div>
-        <div className={styles.icon}>
-          <FiPlusSquare size={24} />
-        </div>
-      </button> }
+        {router.pathname === '/tasks' && (
+          <button
+            className={styles.addTaskButton}
+            type='button'
+            onClick={toggleModal}
+          >
+            <div className={styles.text}>Nova Atividade</div>
+            <div className={styles.icon}>
+              <FiPlusSquare size={24} />
+            </div>
+          </button>
+        )}
         <SignInButton />
       </div>
     </header>
-  )
+  );
 }

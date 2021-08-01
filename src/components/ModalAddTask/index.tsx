@@ -1,52 +1,102 @@
 import { FiCheckSquare } from 'react-icons/fi';
 
-import { Form } from './styles';
-import Modal from '../Modal';
-import Input from '../Input';
-import { TTask } from '../../types';
+import type { TTask } from '../../types';
+import { useState, FormEvent } from 'react';
+import useAuth from '../../hooks/useAuth';
+
+import styles from './styles.module.scss';
 
 interface ModalAddTaskProps {
-  isOpen: boolean;
-  setIsOpen: () => void;
   handleAddTask: (data: TTask) => void;
 }
 
 const ModalAddTask = (props: ModalAddTaskProps) => {
+  const { modalOpen: isOpen, toggleModal } = useAuth();
 
-  async function handleSubmit(data: TTask) {
-    const { setIsOpen, handleAddTask } = props;
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    const { handleAddTask } = props;
 
-    console.log(data);
-    handleAddTask(data);
-    setIsOpen();
-  };
+    event.preventDefault();
 
-    const { isOpen, setIsOpen } = props;
+    const formInputs = Array.from(event.currentTarget);
+    const inputs = formInputs.slice(0, -1) as HTMLInputElement[];
+    const dataAsJson = `{ ${inputs
+      .map(({ name, value }) => `"${name}": "${value}"`)
+      .join(',')} }`;
+    const newData = JSON.parse(dataAsJson) as TTask;
 
-    return (
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-        <Form onSubmit={handleSubmit}>
+    handleAddTask(newData);
+    toggleModal();
+  }
+
+  const [selected, setSelected] = useState<undefined | string>(undefined);
+
+  return (
+    <div className={styles.box} aria-hidden={isOpen}>
+      <div className={styles.overlay} onClick={toggleModal} />
+      <div className={styles.container}>
+        <form onSubmit={handleSubmit}>
           <h1>Nova Atividade</h1>
-          <Input name="title" placeholder="Tarefa" />
-          <Input name="description" placeholder="Descrição" />
-          <label htmlFor="pendente"> Pendente </ label>
-          <Input type="radio" name="status" id="pendente" value="PENDENTE" defaultChecked/>
+          <div>
+            <input name='title' placeholder='Tarefa' />
+          </div>
+          <div>
+            <input name='description' placeholder='Descrição' />
+          </div>
+          <div>
+            <input type='hidden' name='createdAt' defaultValue={Date.now()} />
+          </div>
+          <div>
+            <select
+              name='status'
+              value={selected}
+              onChange={({ target: { value } }) => setSelected(value)}
+            >
+              {['pendente', 'concluida', 'cancelada'].map((e, index) => {
+                return (
+                  <option key={`${e} - ${index}`} value={e}>
+                    {e.slice(0, 1).toUpperCase() + e.slice(1)}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
 
-          <label htmlFor="concluida"> Concluída </ label>
-          <Input type="radio" name="status" id="concluida" value="CONCLUIDA" />
-
-          <label htmlFor="cancelada"> Cancelada </ label>
-          <Input type="radio" name="status" id="cancelada" value="CANCELADA" />
-
-          <button type="submit" data-testid="add-food-button">
-            <p className="text">Adicionar Atividade</p>
-            <div className="icon">
-              <FiCheckSquare size={24} />
-            </div>
-          </button>
-        </Form>
-      </Modal>
-    );
+          <div>
+            <button
+              type='submit'
+              data-testid='add-food-button'
+              className={styles.button}
+            >
+              <p className={styles.text}>Adicionar Atividade</p>
+              <div className={styles.icon}>
+                <FiCheckSquare size={24} />
+              </div>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 };
 
 export default ModalAddTask;
+
+// const [selected, setSelected] = useState(0);
+// {['pendente', 'concluida', 'cancelada'].map((e, index) => {
+//   return (
+//       <Fragment key={ `${e} - ${index}` }>
+//         <label htmlFor={e}>
+//           {e.slice(0, 1).toUpperCase() + e.slice(1)}
+//         </label>
+//         <Input
+//           type='radio'
+//           name='status'
+//           id={e}
+//           value={e.toUpperCase()}
+//           checked={index === selected}
+//           onChange={() => setSelected(index)}
+//         />
+//       </Fragment>
+//   );
+// })}

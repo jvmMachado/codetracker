@@ -1,28 +1,27 @@
 import { AppProps } from 'next/app';
 import { useState } from 'react';
 import { Header } from '../components/Header';
+import { AuthContextProvider } from '../contexts/AuthContext';
+import useAuth from '../hooks/useAuth';
 import { Provider as NextAuthProvider } from 'next-auth/client';
 
 import '../styles/global.scss';
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
-
-  const toggleModal = () => {
-    setModalOpen(!modalOpen);
-  }
-
-  const toggleEditModal = () => {
-    setEditModalOpen(!editModalOpen);
-  }
+  const ProviderLoader = ({ children }: any) => (
+    <>
+      <Header />
+      <Component {...pageProps} />
+    </>
+  );
 
   return (
-    <NextAuthProvider session={pageProps.session} >
-      <Header openModal={toggleModal}/>
-      <Component {...pageProps} modalOpen={modalOpen} toggleModal={toggleModal} editModalOpen={editModalOpen} toggleEditModal={toggleEditModal}/>
-    </NextAuthProvider>
-  )
+    <AuthContextProvider>
+      <NextAuthProvider session={pageProps.session}>
+        <ProviderLoader />
+      </NextAuthProvider>
+    </AuthContextProvider>
+  );
 }
 
-export default MyApp
+export default MyApp;

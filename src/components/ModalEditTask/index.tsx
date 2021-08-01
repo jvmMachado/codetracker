@@ -1,54 +1,98 @@
 import { FiCheckSquare } from 'react-icons/fi';
 
-import { Form } from './styles';
-import Modal from '../Modal';
-import Input from '../Input';
-import { TTask } from '../../types';
+import styles from './styles.module.scss';
+
+import type { TTask } from '../../types';
+import { useState, FormEvent } from 'react';
+import useAuth from '../../hooks/useAuth';
 
 interface ModalEditTaskProps {
-  isOpen: boolean;
   editingTask?: TTask;
-  setIsOpen: () => void;
+  setEditingTask: (any: any) => any;
   handleUpdateTask: (data: TTask) => void;
 }
 
-const ModalEditTask = (props: ModalEditTaskProps) => {
+const ModalEditTask = ({ handleUpdateTask, editingTask, setEditingTask }: ModalEditTaskProps) => {
+  const { editModalOpen: isOpen, toggleEditModal } = useAuth();
 
-  async function handleSubmit(data: TTask) {
-    const { setIsOpen, handleUpdateTask } = props;
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
 
-    console.log(data);
-    handleUpdateTask(data);
-    setIsOpen();
-  };
+    event.preventDefault();
 
+    const formInputs = Array.from(event.currentTarget);
+    const inputs = formInputs.slice(0, -1) as HTMLInputElement[];
+    const dataAsJson = `{ ${inputs
+      .map(({ name, value }) => `"${name}": "${value}"`)
+      .join(',')} }`;
+    const newData = JSON.parse(dataAsJson) as TTask;
+    
+    setEditingTask({} as TTask);
+    
+    handleUpdateTask(newData);
+    // inputs.forEach((e) => (e.value = ''));
+    toggleEditModal();
+  }
 
-  const { isOpen, setIsOpen, editingTask } = props;
+  const [selected, setSelected] = useState<undefined | string>(undefined);
 
   return (
-    <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-      <Form onSubmit={handleSubmit} initialData={editingTask}>
-        <h1>Editar Prato</h1>
-        <Input type="hidden" name="id" defaultValue={editingTask?.id} />
-        <Input name="title" placeholder="Tarefa" />
-          <Input name="description" placeholder="Descrição" />
-          <label htmlFor="pendente"> Pendente </ label>
-          <Input type="radio" name="status" id="pendente" value="PENDENTE" defaultChecked/>
-
-          <label htmlFor="concluida"> Concluída </ label>
-          <Input type="radio" name="status" id="concluida" value="CONCLUIDA" />
-
-          <label htmlFor="cancelada"> Cancelada </ label>
-          <Input type="radio" name="status" id="cancelada" value="CANCELADA" />
-
-        <button type="submit" data-testid="edit-food-button">
-          <div className="text">Editar Prato</div>
-          <div className="icon">
-            <FiCheckSquare size={24} />
+    <div className={styles.box} aria-hidden={isOpen}>
+      <div className={styles.overlay} onClick={toggleEditModal} />
+      <div className={styles.container}>
+        <form onSubmit={handleSubmit}>
+          <h1>Editar Prato</h1>
+          <div>
+            <input type='hidden' name='id' defaultValue={editingTask?.id} />
           </div>
-        </button>
-      </Form>
-    </Modal>
+          <div>
+            <input type='hidden' name='createdAt' defaultValue={editingTask?.createdAt} />
+          </div>
+
+          <div>
+            <input
+              name='title'
+              placeholder='Tarefa'
+              defaultValue={editingTask?.title}
+            />
+          </div>
+          <div>
+            <input
+              name='description'
+              placeholder='Descrição'
+              defaultValue={editingTask?.description}
+            />
+          </div>
+          <div>
+            <select
+              name='status'
+              value={selected}
+              onChange={({ target: { value } }) => setSelected(value)}
+            >
+              {['pendente', 'concluida', 'cancelada'].map((e, index) => {
+                return (
+                  <option key={`${e} - ${index}`} value={e}>
+                    {e.slice(0, 1).toUpperCase() + e.slice(1)}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+
+          <div>
+            <button
+              type='submit'
+              data-testid='add-food-button'
+              className={styles.button}
+            >
+              <p className={styles.text}>Adicionar Atividade</p>
+              <div className={styles.icon}>
+                <FiCheckSquare size={24} />
+              </div>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 

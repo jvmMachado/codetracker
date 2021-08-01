@@ -9,21 +9,23 @@ export function SignInButton() {
 
   return session ? (
     <button className={styles.signInButton}>
-     <FaGithub color="#04d361"/>
-     {session.user?.name}
-     <FiX
-      color="#737380"
-      className={styles.closeIcon}
-      onClick={() => signOut({ callbackUrl: 'http://localhost:3000/' })}
+      <FaGithub color='#04d361' />
+      {session.user?.name}
+      <FiX
+        color='#737380'
+        className={styles.closeIcon}
+        onClick={() => signOut({ callbackUrl: 'http://localhost:3000/' })}
       />
     </button>
   ) : (
     <button
       className={styles.signInButton}
-      onClick={() => signIn('github', {callbackUrl: 'http://localhost:3000/tasks'})}
-      >
-     <FaGithub color="#eba417"/>
-     Logar com GitHub
+      onClick={() =>
+        signIn('github', { callbackUrl: 'http://localhost:3000/tasks' })
+      }
+    >
+      <FaGithub color='#eba417' />
+      Logar com GitHub
     </button>
-  )
+  );
 }

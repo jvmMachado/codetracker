@@ -9,21 +9,22 @@ interface ModalProps {
 
 const Modal = (props: ModalProps) => {
   const { isOpen } = props;
-  const [modalStatus, setModalStatus] = useState(isOpen);
-    
+  // const [modalStatus, setModalStatus] = useState(isOpen);
 
-  useEffect(() => {
-    setModalStatus(isOpen);
-  },
-   [isOpen]);
+  // useEffect(() => {
+  //   setModalStatus(isOpen);
+  // },
+  //  [isOpen]);
 
   const { children, setIsOpen } = props;
+
+  // FIXME: Não está sendo usando
 
   return (
     <ReactModal
       shouldCloseOnOverlayClick={!false}
       onRequestClose={setIsOpen}
-      isOpen={modalStatus}
+      isOpen={false}
       ariaHideApp={false}
       style={{
         content: {

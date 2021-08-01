@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { FiEdit3, FiTrash } from 'react-icons/fi';
 
 import { Container } from './styles';
-// import api from '../../services/api';
-import { TTask } from '../../types';
+import type { TTask } from '../../types';
 
 interface TaskProps {
   task: TTask;
@@ -12,29 +11,27 @@ interface TaskProps {
 }
 
 const Task = (props: TaskProps) => {
-
-
   const setEditingTask = () => {
     const { task, handleEditTask } = props;
 
+
     handleEditTask(task);
-  }
+  };
 
   const { task, handleDelete } = props;
 
   return (
-    <Container >
-      <header>
-      </header>
-      <section className="body">
+    <Container>
+      <header></header>
+      <section className='body'>
         <h2>{task.title}</h2>
         <p>{task.description}</p>
       </section>
-      <section className="footer">
-        <div className="icon-container">
+      <section className='footer'>
+        <div className='icon-container'>
           <button
-            type="button"
-            className="icon"
+            type='button'
+            className='icon'
             onClick={setEditingTask}
             data-testid={`edit-task-${task.id}`}
           >
@@ -42,8 +39,8 @@ const Task = (props: TaskProps) => {
           </button>
 
           <button
-            type="button"
-            className="icon"
+            type='button'
+            className='icon'
             onClick={() => handleDelete(task.id)}
             data-testid={`remove-task-${task.id}`}
           >
@@ -51,8 +48,19 @@ const Task = (props: TaskProps) => {
           </button>
         </div>
 
-        <div className="status-container">
-          <p>{task.status}</p>
+        {/* ERRO DE DIFERENÇA ENTRE SERVIDOR E CLIENT */}
+        <div className='date-container'>
+          {new Date(Number(task.createdAt) || 0)
+            .toLocaleDateString('pt-br')
+            .replace(/\//g, '-')}
+        </div>
+
+        <div className='status-container'>
+          {task.status && (
+            <p>
+              {task.status.slice(0, 1).toUpperCase() + task.status.slice(1)}
+            </p>
+          )}
         </div>
       </section>
     </Container>
